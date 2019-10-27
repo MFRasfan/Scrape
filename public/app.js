@@ -1,12 +1,3 @@
-// Grab the articles as a json
-$.getJSON("/articles", function(data) {
-  // For each one
-  for (var i = 0; i < data.length; i++) {
-    // Display the apropos information on the page
-    $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-  }
-});
-
 
 // Whenever someone clicks a p tag
 $(document).on("click", "p", function() {
@@ -43,30 +34,60 @@ $(document).on("click", "p", function() {
 });
 
 // When you click the savenote button
-$(document).on("click", "#savenote", function() {
-  // Grab the id associated with the article from the submit button
+$(".save").on("click", function() {
   var thisId = $(this).attr("data-id");
-
-  // Run a POST request to change the note, using what's entered in the inputs
   $.ajax({
-    method: "POST",
-    url: "/articles/" + thisId,
-    data: {
-      // Value taken from title input
-      title: $("#titleinput").val(),
-      // Value taken from note textarea
-      body: $("#bodyinput").val()
-    }
+      method: "POST",
+      url: "/articles/save/" + thisId
+  }).done(function(data) {
+      window.location = "/"
   })
-    // With that done
-    .then(function(data) {
-      // Log the response
-      console.log(data);
-      // Empty the notes section
-      $("#notes").empty();
-    });
+});
 
-  // Also, remove the values entered in the input and textarea for note entry
-  $("#titleinput").val("");
-  $("#bodyinput").val("");
+  // /Handle Delete Article button
+$(".delete").on("click", function() {
+  var thisId = $(this).attr("data-id");
+  $.ajax({
+      method: "POST",
+      url: "/articles/delete/" + thisId
+  }).done(function(data) {
+      window.location = "/saved"
+  })
+});
+
+//Handle Save Note button
+$(".saveNote").on("click", function() {
+  var thisId = $(this).attr("data-id");
+  if (!$("#noteText" + thisId).val()) {
+      alert("please enter a note to save")
+  }else {
+    $.ajax({
+          method: "POST",
+          url: "/notes/save/" + thisId,
+          data: {
+            text: $("#noteText" + thisId).val()
+          }
+        }).done(function(data) {
+            // Log the response
+            console.log(data);
+            // Empty the notes section
+            $("#noteText" + thisId).val("");
+            $(".modalNote").modal("hide");
+            window.location = "/saved"
+        });
+  }
+});
+
+//Handle Delete Note button
+$(".deleteNote").on("click", function() {
+  var noteId = $(this).attr("data-note-id");
+  var articleId = $(this).attr("data-article-id");
+  $.ajax({
+      method: "DELETE",
+      url: "/notes/delete/" + noteId + "/" + articleId
+  }).done(function(data) {
+      console.log(data)
+      $(".modalNote").modal("hide");
+      window.location = "/saved"
+  })
 });
