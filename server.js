@@ -44,10 +44,26 @@ app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
 
-mongoose.connect("mongodb://<dbuser>:<dbpassword>@ds331558.mlab.com:31558/heroku_w3xhbbwt");
-mongoose.connect("mongodb://localhost/mongoHeadlines");
-mongoose.connection;
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 
+mongoose.connect("mongodb://heroku_jmv816f9:5j1nd4taq42hi29bfm5hobeujd@ds133192.mlab.com:33192/heroku_jmv816f9");
+
+
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHead";
+
+mongoose.connect(MONGODB_URI,
+    { useNewUrlParser: true }
+);
+
+var db = mongoose.connection;
+
+db.on("error", function (error) {
+    console.log("Mongoose Error: ", error);
+});
+
+db.once("open", function () {
+    console.log("Mongoose connection successful.");
+});
 
 
 // Routes
