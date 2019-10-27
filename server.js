@@ -44,7 +44,7 @@ app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
 
-// mongoose.connect("mongodb://<dbuser>:<dbpassword>@ds331558.mlab.com:31558/heroku_w3xhbbwt");
+mongoose.connect("mongodb://<dbuser>:<dbpassword>@ds331558.mlab.com:31558/heroku_w3xhbbwt");
 mongoose.connect("mongodb://localhost/mongoHeadlines");
 mongoose.connection;
 
